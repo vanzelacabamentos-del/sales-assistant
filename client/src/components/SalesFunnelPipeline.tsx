@@ -6,10 +6,13 @@ import {
   Plus,
   Search,
   Filter,
-  MoreVertical,
   Phone,
   Mail,
   DollarSign,
+  Edit2,
+  Trash2,
+  Save,
+  X,
 } from "lucide-react";
 
 interface Lead {
@@ -79,6 +82,8 @@ export default function SalesFunnelPipeline() {
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [searchQuery, setSearchQuery] = useState("");
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
+  const [editingLeadId, setEditingLeadId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Partial<Lead>>({});
 
   const getLeadsByStatus = (status: string) => {
     return leads.filter((lead) => lead.status === status);
@@ -106,6 +111,45 @@ export default function SalesFunnelPipeline() {
         )
       );
       setDraggedLead(null);
+    }
+  };
+
+  const handleEditStart = (lead: Lead) => {
+    setEditingLeadId(lead.id);
+    setEditData(lead);
+  };
+
+  const handleEditSave = () => {
+    if (editingLeadId && editData) {
+      setLeads((prev) =>
+        prev.map((lead) =>
+          lead.id === editingLeadId
+            ? {
+                ...lead,
+                name: editData.name || lead.name,
+                company: editData.company || lead.company,
+                value: editData.value || lead.value,
+                probability: editData.probability || lead.probability,
+                email: editData.email || lead.email,
+                contact: editData.contact || lead.contact,
+                notes: editData.notes || lead.notes,
+              }
+            : lead
+        )
+      );
+      setEditingLeadId(null);
+      setEditData({});
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingLeadId(null);
+    setEditData({});
+  };
+
+  const handleDeleteLead = (id: string) => {
+    if (window.confirm("Tem certeza que deseja remover este lead?")) {
+      setLeads((prev) => prev.filter((lead) => lead.id !== id));
     }
   };
 
@@ -193,68 +237,168 @@ export default function SalesFunnelPipeline() {
                     </div>
                   ) : (
                     stageLeads.map((lead) => (
-                      <Card
+                      <div
                         key={lead.id}
-                        draggable
+                        draggable={editingLeadId !== lead.id}
                         onDragStart={() => handleDragStart(lead)}
-                        className="p-4 bg-white border-border cursor-move hover:shadow-md transition-shadow"
+                        className="group"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-foreground text-sm">
-                              {lead.name}
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {lead.company}
-                            </p>
-                          </div>
-                          <button className="p-1 hover:bg-muted rounded">
-                            <MoreVertical size={16} className="text-muted-foreground" />
-                          </button>
-                        </div>
-
-                        {/* Lead Value */}
-                        <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded">
-                          <DollarSign size={16} className="text-blue-600" />
-                          <span className="font-semibold text-blue-600 text-sm">
-                            R$ {lead.value.toLocaleString("pt-BR")}
-                          </span>
-                        </div>
-
-                        {/* Probability Bar */}
-                        <div className="mb-3">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-muted-foreground">
-                              Probabilidade
-                            </span>
-                            <span className="text-xs font-semibold text-foreground">
-                              {lead.probability}%
-                            </span>
-                          </div>
-                          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-green-500 transition-all"
-                              style={{ width: `${lead.probability}%` }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Contact Info */}
-                        <div className="space-y-2 pt-3 border-t border-border">
-                          {lead.contact && (
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
-                              <Phone size={14} />
-                              <span>{lead.contact}</span>
+                        {editingLeadId === lead.id ? (
+                          <Card className="p-4 bg-card border-border">
+                            <div className="space-y-3">
+                              <Input
+                                placeholder="Nome"
+                                value={editData.name || ""}
+                                onChange={(e) =>
+                                  setEditData({ ...editData, name: e.target.value })
+                                }
+                                className="bg-input border-border text-sm"
+                              />
+                              <Input
+                                placeholder="Empresa"
+                                value={editData.company || ""}
+                                onChange={(e) =>
+                                  setEditData({ ...editData, company: e.target.value })
+                                }
+                                className="bg-input border-border text-sm"
+                              />
+                              <Input
+                                type="email"
+                                placeholder="Email"
+                                value={editData.email || ""}
+                                onChange={(e) =>
+                                  setEditData({ ...editData, email: e.target.value })
+                                }
+                                className="bg-input border-border text-sm"
+                              />
+                              <Input
+                                placeholder="Telefone"
+                                value={editData.contact || ""}
+                                onChange={(e) =>
+                                  setEditData({ ...editData, contact: e.target.value })
+                                }
+                                className="bg-input border-border text-sm"
+                              />
+                              <div className="grid grid-cols-2 gap-2">
+                                <Input
+                                  type="number"
+                                  placeholder="Valor"
+                                  value={editData.value || ""}
+                                  onChange={(e) =>
+                                    setEditData({
+                                      ...editData,
+                                      value: parseFloat(e.target.value),
+                                    })
+                                  }
+                                  className="bg-input border-border text-sm"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Probabilidade %"
+                                  value={editData.probability || ""}
+                                  onChange={(e) =>
+                                    setEditData({
+                                      ...editData,
+                                      probability: parseFloat(e.target.value),
+                                    })
+                                  }
+                                  className="bg-input border-border text-sm"
+                                  min="0"
+                                  max="100"
+                                />
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={handleEditSave}
+                                  size="sm"
+                                  className="bg-primary hover:bg-primary/90 gap-1 flex-1"
+                                >
+                                  <Save size={14} />
+                                  Salvar
+                                </Button>
+                                <Button
+                                  onClick={handleEditCancel}
+                                  size="sm"
+                                  variant="outline"
+                                  className="gap-1 flex-1"
+                                >
+                                  <X size={14} />
+                                  Cancelar
+                                </Button>
+                              </div>
                             </div>
-                          )}
-                          {lead.email && (
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
-                              <Mail size={14} />
-                              <span className="truncate">{lead.email}</span>
+                          </Card>
+                        ) : (
+                          <Card className="p-4 bg-white border-border cursor-move hover:shadow-md transition-shadow group-hover:ring-2 group-hover:ring-primary/50">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-foreground text-sm">
+                                  {lead.name}
+                                </h3>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {lead.company}
+                                </p>
+                              </div>
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => handleEditStart(lead)}
+                                  className="p-1 hover:bg-muted rounded"
+                                >
+                                  <Edit2 size={14} className="text-muted-foreground" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteLead(lead.id)}
+                                  className="p-1 hover:bg-destructive/10 rounded"
+                                >
+                                  <Trash2 size={14} className="text-destructive" />
+                                </button>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      </Card>
+
+                            {/* Lead Value */}
+                            <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded">
+                              <DollarSign size={16} className="text-blue-600" />
+                              <span className="font-semibold text-blue-600 text-sm">
+                                R$ {lead.value.toLocaleString("pt-BR")}
+                              </span>
+                            </div>
+
+                            {/* Probability Bar */}
+                            <div className="mb-3">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs text-muted-foreground">
+                                  Probabilidade
+                                </span>
+                                <span className="text-xs font-semibold text-foreground">
+                                  {lead.probability}%
+                                </span>
+                              </div>
+                              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-green-500 transition-all"
+                                  style={{ width: `${lead.probability}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Contact Info */}
+                            <div className="space-y-2 pt-3 border-t border-border">
+                              {lead.contact && (
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
+                                  <Phone size={14} />
+                                  <span>{lead.contact}</span>
+                                </div>
+                              )}
+                              {lead.email && (
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
+                                  <Mail size={14} />
+                                  <span className="truncate">{lead.email}</span>
+                                </div>
+                              )}
+                            </div>
+                          </Card>
+                        )}
+                      </div>
                     ))
                   )}
                 </div>
