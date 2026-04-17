@@ -12,6 +12,7 @@ import {
   Home,
   Tag,
   Zap,
+  MessageCircle,
 } from "lucide-react";
 
 interface NavItem {
@@ -31,6 +32,7 @@ const navItems: NavItem[] = [
   { icon: <Tag size={20} />, label: "Etiquetas", path: "/labels" },
   { icon: <Zap size={20} />, label: "Leads", path: "/leads" },
   { icon: <Users size={20} />, label: "Vendedores", path: "/sellers" },
+  { icon: <MessageCircle size={20} />, label: "WhatsApp", path: "/whatsapp-connect" },
   { icon: <Settings size={20} />, label: "Configurações", path: "/settings" },
 ];
 

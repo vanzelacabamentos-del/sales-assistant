@@ -20,6 +20,7 @@ import SalesFunnelKanban from "./pages/SalesFunnelKanban";
 import Gmail from "./pages/Gmail";
 import Admin from "./pages/Admin";
 import Leads from "./pages/Leads";
+import WhatsAppConnect from "./pages/WhatsAppConnect";
 
 function Router() {
   return (
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/sales-funnel-kanban" component={SalesFunnelKanban} />
       <Route path="/gmail" component={Gmail} />
       <Route path="/leads" component={Leads} />
+      <Route path="/whatsapp-connect" component={WhatsAppConnect} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
