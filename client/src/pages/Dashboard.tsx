@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import HumbleSidebar from "@/components/HumbleSidebar";
+import MobileMenu from "@/components/MobileMenu";
 import {
   BarChart,
   Bar,
@@ -52,9 +53,10 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-background">
       <HumbleSidebar />
+      <MobileMenu />
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-4 md:p-8">
+      <main className="flex-1 md:ml-64 mt-16 md:mt-0 p-4 md:p-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">

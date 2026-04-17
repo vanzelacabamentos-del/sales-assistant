@@ -1,4 +1,5 @@
 import HumbleSidebar from "@/components/HumbleSidebar";
+import MobileMenu from "@/components/MobileMenu";
 import WhatsAppConversation from "@/components/WhatsAppConversation";
 import { useLocation } from "wouter";
 import { useState } from "react";
@@ -111,7 +112,8 @@ export default function ConversationDetail() {
   return (
     <div className="flex min-h-screen bg-background">
       <HumbleSidebar />
-      <div className="flex-1 ml-64">
+      <MobileMenu />
+      <div className="flex-1 md:ml-64 mt-16 md:mt-0">
         <WhatsAppConversation
           conversation={conversation}
           onBack={() => navigate("/conversations")}

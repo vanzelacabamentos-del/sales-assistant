@@ -15,6 +15,8 @@ import {
   Clock,
   MessageCircle,
   FileText,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 interface Message {
@@ -64,6 +66,7 @@ export default function WhatsAppConversation({
   const [internalMessageInput, setInternalMessageInput] = useState("");
   const [showNotes, setShowNotes] = useState(false);
   const [showInternalMessages, setShowInternalMessages] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState(conversation.assignedTo || "");
 
   const sellers = [
@@ -99,61 +102,64 @@ export default function WhatsAppConversation({
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background flex-col md:flex-row">
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-3 md:p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
             <button
               onClick={onBack}
-              className="hover:bg-white/20 p-2 rounded-lg transition-colors"
+              className="hover:bg-white/20 p-2 rounded-lg transition-colors flex-shrink-0"
             >
-              <ArrowLeft size={24} />
+              <ArrowLeft size={20} />
             </button>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
               <img
                 src={conversation.avatar}
                 alt={conversation.name}
-                className="w-12 h-12 rounded-full"
+                className="w-10 h-10 rounded-full flex-shrink-0"
               />
-              <div>
-                <h2 className="font-semibold text-lg">{conversation.name}</h2>
-                <p className="text-sm text-green-100">Online</p>
+              <div className="min-w-0">
+                <h2 className="font-semibold text-sm truncate">{conversation.name}</h2>
+                <p className="text-xs text-green-100">Online</p>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors">
+          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors hidden md:block">
               <Phone size={20} />
             </button>
-            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors">
+            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors hidden md:block">
               <Video size={20} />
             </button>
-            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors">
-              <Search size={20} />
+            <button
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="hover:bg-white/20 p-2 rounded-lg transition-colors md:hidden"
+            >
+              {showSidebar ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
             </button>
-            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors">
+            <button className="hover:bg-white/20 p-2 rounded-lg transition-colors hidden md:block">
               <MoreVertical size={20} />
             </button>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gradient-to-b from-gray-50 to-white">
           {conversation.messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
+                className={`max-w-xs md:max-w-md px-3 md:px-4 py-2 rounded-lg text-sm md:text-base ${
                   message.sender === "user"
                     ? "bg-green-500 text-white rounded-br-none"
                     : "bg-white text-foreground border border-border rounded-bl-none"
                 }`}
               >
-                <p className="text-sm">{message.text}</p>
+                <p>{message.text}</p>
                 <p
                   className={`text-xs mt-1 ${
                     message.sender === "user"
@@ -172,12 +178,12 @@ export default function WhatsAppConversation({
         </div>
 
         {/* Input Area */}
-        <div className="bg-white border-t border-border p-4">
-          <div className="flex items-center gap-2">
-            <button className="hover:bg-gray-100 p-2 rounded-lg transition-colors">
+        <div className="bg-white border-t border-border p-2 md:p-4">
+          <div className="flex items-center gap-1 md:gap-2">
+            <button className="hover:bg-gray-100 p-2 rounded-lg transition-colors flex-shrink-0 hidden md:block">
               <Paperclip size={20} className="text-gray-600" />
             </button>
-            <button className="hover:bg-gray-100 p-2 rounded-lg transition-colors">
+            <button className="hover:bg-gray-100 p-2 rounded-lg transition-colors flex-shrink-0 hidden md:block">
               <Smile size={20} className="text-gray-600" />
             </button>
             <Input
@@ -185,36 +191,40 @@ export default function WhatsAppConversation({
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              className="flex-1 border-0 bg-gray-100 rounded-full"
+              className="flex-1 border-0 bg-gray-100 rounded-full text-sm md:text-base"
             />
             <button
               onClick={handleSendMessage}
-              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors"
+              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors flex-shrink-0"
             >
-              <Send size={20} />
+              <Send size={18} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Sidebar - Detalhes */}
-      <div className="w-80 bg-card border-l border-border flex flex-col overflow-hidden">
+      {/* Sidebar - Detalhes (Desktop) / Modal (Mobile) */}
+      <div
+        className={`w-full md:w-80 bg-card border-t md:border-t-0 md:border-l border-border flex flex-col overflow-hidden transition-all duration-300 ${
+          showSidebar ? "block" : "hidden md:flex"
+        }`}
+      >
         {/* Tabs */}
-        <div className="flex border-b border-border">
+        <div className="flex border-b border-border overflow-x-auto">
           <button
             onClick={() => {
               setShowNotes(false);
               setShowInternalMessages(false);
             }}
-            className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex-1 py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               !showNotes && !showInternalMessages
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <div className="flex items-center justify-center gap-2">
-              <User size={16} />
-              Detalhes
+            <div className="flex items-center justify-center gap-1 md:gap-2">
+              <User size={14} />
+              <span className="hidden md:inline">Detalhes</span>
             </div>
           </button>
           <button
@@ -222,15 +232,15 @@ export default function WhatsAppConversation({
               setShowNotes(true);
               setShowInternalMessages(false);
             }}
-            className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex-1 py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               showNotes
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <div className="flex items-center justify-center gap-2">
-              <FileText size={16} />
-              Notas
+            <div className="flex items-center justify-center gap-1 md:gap-2">
+              <FileText size={14} />
+              <span className="hidden md:inline">Notas</span>
             </div>
           </button>
           <button
@@ -238,30 +248,30 @@ export default function WhatsAppConversation({
               setShowNotes(false);
               setShowInternalMessages(true);
             }}
-            className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex-1 py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               showInternalMessages
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <div className="flex items-center justify-center gap-2">
-              <MessageCircle size={16} />
-              Comentários
+            <div className="flex items-center justify-center gap-1 md:gap-2">
+              <MessageCircle size={14} />
+              <span className="hidden md:inline">Comentários</span>
             </div>
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
           {/* Detalhes Tab */}
           {!showNotes && !showInternalMessages && (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {/* Contact Info */}
-              <Card className="p-4 bg-muted border-0">
-                <h3 className="font-semibold text-foreground mb-3">
+              <Card className="p-3 md:p-4 bg-muted border-0">
+                <h3 className="font-semibold text-foreground mb-2 md:mb-3 text-sm md:text-base">
                   Informações do Contato
                 </h3>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1 md:space-y-2 text-xs md:text-sm">
                   <p>
                     <span className="text-muted-foreground">Nome:</span>{" "}
                     <span className="font-medium">{conversation.name}</span>
@@ -278,16 +288,16 @@ export default function WhatsAppConversation({
               </Card>
 
               {/* Assign Seller */}
-              <Card className="p-4 bg-muted border-0">
-                <h3 className="font-semibold text-foreground mb-3">
+              <Card className="p-3 md:p-4 bg-muted border-0">
+                <h3 className="font-semibold text-foreground mb-2 md:mb-3 text-sm md:text-base">
                   Atribuir Vendedor
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-1 md:space-y-2">
                   {sellers.map((seller) => (
                     <button
                       key={seller.id}
                       onClick={() => handleAssignSeller(seller.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                      className={`w-full text-left px-2 md:px-3 py-2 rounded-lg transition-colors text-sm md:text-base ${
                         selectedSeller === seller.id
                           ? "bg-primary text-primary-foreground"
                           : "bg-background hover:bg-background/80 text-foreground"
@@ -300,11 +310,11 @@ export default function WhatsAppConversation({
               </Card>
 
               {/* Conversation Stats */}
-              <Card className="p-4 bg-muted border-0">
-                <h3 className="font-semibold text-foreground mb-3">
+              <Card className="p-3 md:p-4 bg-muted border-0">
+                <h3 className="font-semibold text-foreground mb-2 md:mb-3 text-sm md:text-base">
                   Estatísticas
                 </h3>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1 md:space-y-2 text-xs md:text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Mensagens:</span>
                     <span className="font-medium">
@@ -327,21 +337,21 @@ export default function WhatsAppConversation({
 
           {/* Notas Tab */}
           {showNotes && (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
+                <label className="text-xs md:text-sm font-medium text-foreground">
                   Adicionar Nota
                 </label>
                 <textarea
                   placeholder="Digite uma nota..."
                   value={noteInput}
                   onChange={(e) => setNoteInput(e.target.value)}
-                  className="w-full p-2 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full p-2 border border-border rounded-lg text-xs md:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                   rows={3}
                 />
                 <Button
                   onClick={handleAddNote}
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full bg-primary hover:bg-primary/90 text-xs md:text-sm"
                   size="sm"
                 >
                   Adicionar Nota
@@ -351,16 +361,16 @@ export default function WhatsAppConversation({
               {/* Notas List */}
               <div className="space-y-2">
                 {conversation.notes.map((note) => (
-                  <Card key={note.id} className="p-3 bg-muted border-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <p className="font-medium text-sm text-foreground">
+                  <Card key={note.id} className="p-2 md:p-3 bg-muted border-0">
+                    <div className="flex items-start justify-between mb-1 md:mb-2">
+                      <p className="font-medium text-xs md:text-sm text-foreground">
                         {note.author}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(note.timestamp).toLocaleString("pt-BR")}
                       </p>
                     </div>
-                    <p className="text-sm text-foreground">{note.text}</p>
+                    <p className="text-xs md:text-sm text-foreground">{note.text}</p>
                   </Card>
                 ))}
               </div>
@@ -369,21 +379,21 @@ export default function WhatsAppConversation({
 
           {/* Comentários Tab */}
           {showInternalMessages && (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
+                <label className="text-xs md:text-sm font-medium text-foreground">
                   Comentário Interno
                 </label>
                 <textarea
                   placeholder="Mensagem interna para a equipe..."
                   value={internalMessageInput}
                   onChange={(e) => setInternalMessageInput(e.target.value)}
-                  className="w-full p-2 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full p-2 border border-border rounded-lg text-xs md:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                   rows={3}
                 />
                 <Button
                   onClick={handleAddInternalMessage}
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full bg-primary hover:bg-primary/90 text-xs md:text-sm"
                   size="sm"
                 >
                   Enviar Comentário
@@ -406,16 +416,16 @@ export default function WhatsAppConversation({
                     timestamp: new Date().toISOString(),
                   },
                 ].map((msg) => (
-                  <Card key={msg.id} className="p-3 bg-blue-50 border-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <p className="font-medium text-sm text-blue-900">
+                  <Card key={msg.id} className="p-2 md:p-3 bg-blue-50 border-0">
+                    <div className="flex items-start justify-between mb-1 md:mb-2">
+                      <p className="font-medium text-xs md:text-sm text-blue-900">
                         {msg.author}
                       </p>
                       <p className="text-xs text-blue-700">
                         {new Date(msg.timestamp).toLocaleString("pt-BR")}
                       </p>
                     </div>
-                    <p className="text-sm text-blue-900">{msg.text}</p>
+                    <p className="text-xs md:text-sm text-blue-900">{msg.text}</p>
                   </Card>
                 ))}
               </div>

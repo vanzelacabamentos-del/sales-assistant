@@ -39,7 +39,7 @@ export default function HumbleSidebar() {
   const [currentPath, setCurrentPath] = useState("/");
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar text-sidebar-foreground z-40 overflow-hidden flex flex-col border-r border-sidebar-border">
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-sidebar text-sidebar-foreground z-40 overflow-hidden flex-col border-r border-sidebar-border">
       {/* Logo */}
       <div className="p-4 border-b border-sidebar-border flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-sidebar-accent flex items-center justify-center flex-shrink-0">
