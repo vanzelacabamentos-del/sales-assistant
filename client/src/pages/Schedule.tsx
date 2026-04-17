@@ -1,7 +1,7 @@
+import HumbleSidebar from "@/components/HumbleSidebar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import HumbleSidebar from "@/components/HumbleSidebar";
 import { useGoogleSync } from "@/hooks/useGoogleSync";
 import { Plus, Calendar, Clock, Loader } from "lucide-react";
 import { useState } from "react";
@@ -31,7 +31,7 @@ export default function Schedule() {
     <div className="flex min-h-screen bg-background">
       <HumbleSidebar />
 
-      <main className="flex-1 lg:ml-64 p-4 md:p-8">
+      <main className="flex-1 ml-64 p-4 md:p-8">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">

@@ -1,3 +1,4 @@
+import HumbleSidebar from "@/components/HumbleSidebar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";

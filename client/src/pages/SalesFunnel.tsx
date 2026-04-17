@@ -5,7 +5,7 @@ export default function SalesFunnel() {
   return (
     <div className="flex min-h-screen bg-background">
       <HumbleSidebar />
-      <main className="flex-1 p-0">
+      <main className="flex-1 ml-64 p-0">
         <SalesFunnelPipeline />
       </main>
     </div>

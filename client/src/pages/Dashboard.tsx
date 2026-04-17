@@ -54,7 +54,7 @@ export default function Dashboard() {
       <HumbleSidebar />
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 ml-64 p-4 md:p-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">

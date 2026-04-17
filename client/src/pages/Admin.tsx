@@ -190,7 +190,7 @@ export default function Admin() {
     <div className="flex min-h-screen bg-background">
       <HumbleSidebar />
 
-      <main className="flex-1 lg:ml-64 p-4 md:p-8">
+      <main className="flex-1 ml-64 p-4 md:p-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">

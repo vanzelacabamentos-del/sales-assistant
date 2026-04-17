@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import HumbleSidebar from "@/components/HumbleSidebar";
 import { useLocation } from "wouter";
 import { Search, MessageSquare, Clock } from "lucide-react";
 
@@ -32,21 +33,11 @@ export default function Conversations() {
   const [, navigate] = useLocation();
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-card border-r border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-8">Sales AI</h1>
-        <Button
-          onClick={() => navigate("/")}
-          className="w-full mb-4"
-          variant="outline"
-        >
-          ← Voltar
-        </Button>
-      </div>
+    <div className="flex min-h-screen bg-background">
+      <HumbleSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <main className="flex-1 ml-64 flex flex-col">
         {/* Header */}
         <div className="bg-card border-b border-border p-6">
           <h2 className="text-2xl font-bold text-foreground mb-4">Conversas</h2>
@@ -96,7 +87,7 @@ export default function Conversations() {
             ))}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
