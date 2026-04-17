@@ -21,6 +21,7 @@ import Gmail from "./pages/Gmail";
 import Admin from "./pages/Admin";
 import Leads from "./pages/Leads";
 import WhatsAppConnect from "./pages/WhatsAppConnect";
+import TestCenter from "./pages/TestCenter";
 
 function Router() {
   return (
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/gmail" component={Gmail} />
       <Route path="/leads" component={Leads} />
       <Route path="/whatsapp-connect" component={WhatsAppConnect} />
+      <Route path="/test-center" component={TestCenter} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
