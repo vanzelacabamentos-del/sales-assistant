@@ -11,6 +11,7 @@ import {
   LogOut,
   Home,
   Tag,
+  Zap,
 } from "lucide-react";
 
 interface NavItem {
@@ -28,6 +29,7 @@ const navItems: NavItem[] = [
   { icon: <BarChart3 size={20} />, label: "Métricas", path: "/metrics" },
   { icon: <TrendingUp size={20} />, label: "Funil", path: "/sales-funnel" },
   { icon: <Tag size={20} />, label: "Etiquetas", path: "/labels" },
+  { icon: <Zap size={20} />, label: "Leads", path: "/leads" },
   { icon: <Users size={20} />, label: "Vendedores", path: "/sellers" },
   { icon: <Settings size={20} />, label: "Configurações", path: "/settings" },
 ];

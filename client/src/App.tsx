@@ -19,6 +19,7 @@ import SalesFunnel from "./pages/SalesFunnel";
 import SalesFunnelKanban from "./pages/SalesFunnelKanban";
 import Gmail from "./pages/Gmail";
 import Admin from "./pages/Admin";
+import Leads from "./pages/Leads";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/sales-funnel" component={SalesFunnel} />
       <Route path="/sales-funnel-kanban" component={SalesFunnelKanban} />
       <Route path="/gmail" component={Gmail} />
+      <Route path="/leads" component={Leads} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

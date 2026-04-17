@@ -1,7 +1,5 @@
 import HumbleSidebar from "@/components/HumbleSidebar";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
 
 const kanbanData = {
   leads: [
@@ -38,24 +36,20 @@ const columns: KanbanColumn[] = [
 ];
 
 export default function SalesFunnelKanban() {
-  const [, navigate] = useLocation();
-
   return (
-    <div className="flex h-screen bg-background">
-      <div className="w-64 bg-card border-r border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-8">Sales AI</h1>
-        <Button onClick={() => navigate("/")} className="w-full mb-4" variant="outline">
-          ← Voltar
-        </Button>
-      </div>
+    <div className="flex min-h-screen bg-background">
+      <HumbleSidebar />
 
-      <div className="flex-1 flex flex-col">
-        <div className="bg-card border-b border-border p-6">
-          <h2 className="text-2xl font-bold text-foreground">Funil de Vendas - Kanban</h2>
+      <main className="flex-1 ml-64 p-4 md:p-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Funil de Vendas - Kanban</h1>
+          <p className="text-muted-foreground">
+            Visualize seus leads em diferentes estágios
+          </p>
         </div>
 
-        <div className="flex-1 overflow-x-auto p-6">
-          <div className="flex gap-6 min-w-max">
+        <div className="overflow-x-auto">
+          <div className="flex gap-6 min-w-max pb-4">
             {columns.map((column) => (
               <div key={column.title} className="flex-shrink-0 w-80">
                 <div className="bg-muted rounded-lg p-4 mb-4">
@@ -87,7 +81,7 @@ export default function SalesFunnelKanban() {
             ))}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
