@@ -1,131 +1,124 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import HumbleSidebar from "@/components/HumbleSidebar";
+import WhatsAppConversation from "@/components/WhatsAppConversation";
 import { useLocation } from "wouter";
-import { Send, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 interface Message {
   id: string;
-  text: string;
   sender: "user" | "contact";
+  text: string;
+  timestamp: string;
+  status?: "sent" | "delivered" | "read";
+}
+
+interface InternalNote {
+  id: string;
+  author: string;
+  text: string;
   timestamp: string;
 }
 
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    text: "Olá, gostaria de saber mais sobre seus produtos",
-    sender: "contact",
-    timestamp: "09:00",
-  },
-  {
-    id: "2",
-    text: "Claro! Qual produto você tem interesse?",
-    sender: "user",
-    timestamp: "09:05",
-  },
-  {
-    id: "3",
-    text: "Gostaria de informações sobre o plano premium",
-    sender: "contact",
-    timestamp: "09:10",
-  },
-];
+interface Conversation {
+  id: string;
+  name: string;
+  avatar: string;
+  lastMessage: string;
+  timestamp: string;
+  unread: number;
+  messages: Message[];
+  assignedTo?: string;
+  notes: InternalNote[];
+}
+
+const mockConversation: Conversation = {
+  id: "1",
+  name: "João Silva",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+  lastMessage: "Qual é o preço do produto?",
+  timestamp: new Date().toISOString(),
+  unread: 0,
+  messages: [
+    {
+      id: "1",
+      sender: "contact",
+      text: "Olá, tudo bem?",
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+    },
+    {
+      id: "2",
+      sender: "user",
+      text: "Oi! Tudo certo! Como posso ajudar?",
+      timestamp: new Date(Date.now() - 3500000).toISOString(),
+    },
+    {
+      id: "3",
+      sender: "contact",
+      text: "Gostaria de saber mais sobre seus produtos",
+      timestamp: new Date(Date.now() - 3400000).toISOString(),
+    },
+    {
+      id: "4",
+      sender: "user",
+      text: "Claro! Qual produto você tem interesse?",
+      timestamp: new Date(Date.now() - 3300000).toISOString(),
+    },
+    {
+      id: "5",
+      sender: "contact",
+      text: "Qual é o preço do produto?",
+      timestamp: new Date(Date.now() - 3200000).toISOString(),
+    },
+  ],
+  assignedTo: "1",
+  notes: [
+    {
+      id: "1",
+      author: "Você",
+      text: "Cliente muito interessado em aumentar o pedido",
+      timestamp: new Date(Date.now() - 7200000).toISOString(),
+    },
+  ],
+};
 
 export default function ConversationDetail() {
   const [, navigate] = useLocation();
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState("");
+  const [conversation, setConversation] = useState<Conversation>(mockConversation);
 
-  const handleSendMessage = () => {
-    if (!input.trim()) return;
-
-    const newMessage: Message = {
-      id: (messages.length + 1).toString(),
-      text: input,
-      sender: "user",
-      timestamp: new Date().toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+  const handleAddNote = (noteText: string) => {
+    const newNote: InternalNote = {
+      id: String(conversation.notes.length + 1),
+      author: "Você",
+      text: noteText,
+      timestamp: new Date().toISOString(),
     };
+    setConversation((prev) => ({
+      ...prev,
+      notes: [...prev.notes, newNote],
+    }));
+  };
 
-    setMessages([...messages, newMessage]);
-    setInput("");
+  const handleAddInternalMessage = (messageText: string) => {
+    console.log("Mensagem interna adicionada:", messageText);
+  };
+
+  const handleAssignSeller = (sellerId: string) => {
+    setConversation((prev) => ({
+      ...prev,
+      assignedTo: sellerId,
+    }));
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-card border-r border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-8">Sales AI</h1>
-        <Button
-          onClick={() => navigate("/conversations")}
-          className="w-full mb-4"
-          variant="outline"
-        >
-          ← Voltar
-        </Button>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="bg-card border-b border-border p-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">João Silva</h2>
-            <p className="text-sm text-muted-foreground">Online</p>
-          </div>
-          <Button variant="outline">Mais opções</Button>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
-                  msg.sender === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                <p className="text-sm">{msg.text}</p>
-                <span className="text-xs opacity-70 mt-1 block">
-                  {msg.timestamp}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Input */}
-        <div className="bg-card border-t border-border p-6 flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                handleSendMessage();
-              }
-            }}
-            placeholder="Digite sua mensagem..."
-            className="flex-1"
-          />
-          <Button
-            onClick={handleSendMessage}
-            size="icon"
-            className="bg-primary hover:bg-primary/90"
-          >
-            <Send size={18} />
-          </Button>
-        </div>
+    <div className="flex min-h-screen bg-background">
+      <HumbleSidebar />
+      <div className="flex-1 ml-64">
+        <WhatsAppConversation
+          conversation={conversation}
+          onBack={() => navigate("/conversations")}
+          onAddNote={handleAddNote}
+          onAddInternalMessage={handleAddInternalMessage}
+          onAssignSeller={handleAssignSeller}
+        />
       </div>
     </div>
   );
