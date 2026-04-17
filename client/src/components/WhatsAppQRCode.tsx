@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
-// @ts-ignore
-import QRCode from "qrcode.react";
+import { useState, useEffect, useRef } from "react";
+import QRCodeStyling from "qr-code-styling";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, RefreshCw, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { Copy, RefreshCw, CheckCircle, AlertCircle, Loader, Download } from "lucide-react";
 
 interface WhatsAppQRCodeProps {
   onConnected?: (phoneNumber: string) => void;
@@ -13,7 +12,8 @@ interface WhatsAppQRCodeProps {
 type ConnectionStatus = "idle" | "generating" | "waiting" | "connected" | "error";
 
 export default function WhatsAppQRCode({ onConnected, onError }: WhatsAppQRCodeProps) {
-  const [qrCode, setQrCode] = useState<string>("");
+  const qrRef = useRef<HTMLDivElement>(null);
+  const [qrCode, setQrCode] = useState<QRCodeStyling | null>(null);
   const [status, setStatus] = useState<ConnectionStatus>("idle");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [expiresIn, setExpiresIn] = useState<number>(60);
@@ -25,9 +25,36 @@ export default function WhatsAppQRCode({ onConnected, onError }: WhatsAppQRCodeP
     
     // Simular geração de QR code (em produção, seria uma chamada à API)
     const qrData = `https://wa.me/qr?code=${Math.random().toString(36).substring(7)}&expires=${Date.now() + 60000}`;
-    setQrCode(qrData);
+    
+    const qr = new QRCodeStyling({
+      width: 256,
+      height: 256,
+      data: qrData,
+      image: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
+      dotsOptions: {
+        color: "#000000",
+        type: "square",
+      },
+      backgroundOptions: {
+        color: "#ffffff",
+      },
+      cornersSquareOptions: {
+        type: "square",
+      },
+      cornersDotOptions: {
+        type: "square",
+      },
+    });
+
+    setQrCode(qr);
     setStatus("waiting");
     setExpiresIn(60);
+
+    // Renderizar QR code
+    if (qrRef.current) {
+      qrRef.current.innerHTML = "";
+      qr.append(qrRef.current);
+    }
 
     // Simular contagem regressiva
     const interval = setInterval(() => {
@@ -61,17 +88,35 @@ export default function WhatsAppQRCode({ onConnected, onError }: WhatsAppQRCodeP
 
   const handleCopyQRCode = () => {
     if (qrCode) {
-      navigator.clipboard.writeText(qrCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const canvas = qrRef.current?.querySelector("canvas") as HTMLCanvasElement;
+      if (canvas) {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            navigator.clipboard.write([
+              new ClipboardItem({ "image/png": blob }),
+            ]);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }
+        });
+      }
+    }
+  };
+
+  const handleDownloadQRCode = () => {
+    if (qrCode) {
+      qrCode.download({ name: "whatsapp-qr-code", extension: "png" });
     }
   };
 
   const handleDisconnect = () => {
     setStatus("idle");
-    setQrCode("");
+    setQrCode(null);
     setPhoneNumber("");
     setExpiresIn(60);
+    if (qrRef.current) {
+      qrRef.current.innerHTML = "";
+    }
   };
 
   return (
@@ -136,16 +181,10 @@ export default function WhatsAppQRCode({ onConnected, onError }: WhatsAppQRCodeP
         </div>
 
         {/* QR Code Display */}
-        {qrCode && (status === "waiting" || status === "connected") && (
+        {(status === "waiting" || status === "connected") && (
           <div className="mb-6 flex flex-col items-center">
             <div className="p-4 bg-white rounded-lg border-2 border-border">
-              <QRCode
-                value={qrCode}
-                size={256}
-                level="H"
-                includeMargin={true}
-                renderAs="canvas"
-              />
+              <div ref={qrRef} className="w-64 h-64" />
             </div>
             <p className="text-xs text-muted-foreground mt-3 text-center">
               Abra o WhatsApp no seu telefone e escaneie este código
@@ -239,16 +278,24 @@ export default function WhatsAppQRCode({ onConnected, onError }: WhatsAppQRCodeP
           )}
         </div>
 
-        {/* QR Code Copy */}
+        {/* QR Code Actions */}
         {qrCode && status !== "idle" && (
-          <div className="mt-4 pt-4 border-t border-border">
+          <div className="mt-4 pt-4 border-t border-border space-y-2">
             <Button
               onClick={handleCopyQRCode}
               variant="outline"
               className="w-full text-xs"
             >
               <Copy size={14} className="mr-2" />
-              {copied ? "Copiado!" : "Copiar código QR"}
+              {copied ? "Copiado!" : "Copiar QR Code"}
+            </Button>
+            <Button
+              onClick={handleDownloadQRCode}
+              variant="outline"
+              className="w-full text-xs"
+            >
+              <Download size={14} className="mr-2" />
+              Baixar QR Code
             </Button>
           </div>
         )}
